@@ -19,7 +19,7 @@ class Lorenz:
     def __init__(self, noise_type: str = 'Gaussian'):
         self.dim_x = 3
         self.dim_y = 5
-        self.P0 = 0.1 * np.eye(self.dim_x)
+        self.P0 = 0.01 * np.eye(self.dim_x)
         self.x0 =  np.random.multivariate_normal(mean=np.zeros(self.dim_x), cov=self.P0)
         
         self.var = np.array([1e-2, 1e-2, 1e-2])
