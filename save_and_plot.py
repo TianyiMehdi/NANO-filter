@@ -42,15 +42,17 @@ def save_per_exp(data_dict, **args_dict):
     x_hat_mc = data_dict['x_hat_mc']
     x_rmse = calculate_rmse(x_mc, x_hat_mc)
     print('RMSE:', x_rmse)
+    print('time:', data_dict['mean_time'])
     data_dict['x_rmse'] = x_rmse
     args_dict['x_rmse'] = x_rmse.tolist()
+    args_dict['time'] = data_dict['mean_time']
 
     # Get the current date and time in the format Year-Month-Day-Hour-Minute
     current_time = datetime.now().strftime("%Y-%m-%d-%H-%M")
 
     # Create a directory named after the current date and time
     if data_dir is None:
-        data_dir = f"../../results/{current_time}"
+        data_dir = f"../results/{current_time}"
     os.makedirs(data_dir, exist_ok=True)
 
     # Create a file name for parameters based on 'filter_name', 'model_name', and 'noise_name' from the parameters dict
@@ -75,7 +77,7 @@ def plot_state_error(data_dir, filter_name, **data_dict):
     num_experiments, num_steps, num_states = x_mc.shape
 
     # 使用 Seaborn 的样式
-    plt.style.use('../../style.mpl')
+    plt.style.use('/home/zhangtianyi/Gibss-Gaussian-Filtering/style.mpl')
 
     # 对每个状态绘制一个误差图
     for state_index in range(num_states):

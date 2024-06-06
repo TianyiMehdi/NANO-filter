@@ -9,7 +9,7 @@ from tqdm import tqdm
 sys.path.append("../")
 from filter import GGF, EKF, UKF
 from environ import Vehicle, Lorenz
-from save_plot import calculate_rmse
+from save_and_plot import calculate_rmse, save_per_exp
 
 
 
@@ -51,9 +51,11 @@ if __name__ == "__main__":
     x_mc = []
     y_mc = []
     x_hat_mc = []
+    all_time = []
 
     for _ in tqdm(range(args_dict['N_exp'])):
         x_list, y_list, x_hat_list = [], [], []
+        run_time = []
         # initialize system
         x = model.x0
         y = model.h_withnoise(x)
@@ -69,20 +71,25 @@ if __name__ == "__main__":
             x_list.append(x)
             y_list.append(y)
 
+            time1 = time.time()
             # perform filtering
             filter.predict()
             filter.update(y)
+            time2 = time.time()
             x_hat_list.append(filter.x)
+            run_time.append(time2 - time1)
 
         x_mc.append(np.array(x_list))
         y_mc.append(np.array(y_list))
         x_hat_mc.append(np.array(x_hat_list))
+        all_time.append(np.mean(run_time))
 
     x_mc = np.array(x_mc)
     y_mc = np.array(y_mc)
     x_hat_mc = np.array(x_hat_mc)
+    mean_time = np.mean(all_time)
 
-    data_dict = {'x_mc': x_mc, 'y_mc': y_mc, 'x_hat_mc': x_hat_mc}
-    print(calculate_rmse(x_mc, x_hat_mc))
+    data_dict = {'x_mc': x_mc, 'y_mc': y_mc, 'x_hat_mc': x_hat_mc, 'mean_time': mean_time}
+    # print(calculate_rmse(x_mc, x_hat_mc))
 
-    # save_per_exp(data_dict, **args_dict)
+    save_per_exp(data_dict, **args_dict)

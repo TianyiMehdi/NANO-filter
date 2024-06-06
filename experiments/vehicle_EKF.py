@@ -19,7 +19,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
 
     # Add arguments
-    parser.add_argument("--filter_name", default="UKF", type=str, help="Name of the filter")
+    parser.add_argument("--filter_name", default="EKF", type=str, help="Name of the filter")
     parser.add_argument("--model_name", default="Vehicle", type=str, help="Name of the model")
     parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     np.random.seed(args_dict['random_seed'])
 
     model = Vehicle()
-    filter = UKF(model)
+    filter = EKF(model)
 
     x_mc = []
     y_mc = []
