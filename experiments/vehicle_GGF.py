@@ -29,14 +29,14 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
+    parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
     
     if args.filter_name == "GGF":
-        parser.add_argument("--loss_type", default='beta_likelihood_loss', type=str, help="Loss type for GGF")
         parser.add_argument("--n_iterations", default=10, type=float, help="Iterations for GGF")
 
     # exp arguments

@@ -6,6 +6,7 @@ from filterpy.kalman import unscented_transform as UT
 import autograd.numpy as np
 from autograd import jacobian, hessian
 import seaborn as sns
+import time
 # logging.basicConfig(level=logging.DEBUG)
 from scipy.optimize import minimize
 
@@ -73,6 +74,32 @@ class GGF:
         # cal hessian of loss function
         return hessian(lambda x: self.loss_func(x, y))(x)
     
+    def loss_func_hessian_diff(self, x, y, epsilon=1e-4):
+        n = len(x)
+        Hessian = np.zeros((n, n))
+        f = self.loss_func
+        fx = f(x, y)
+        
+        for i in range(n):
+            for j in range(i, n):
+                x_ij = x.copy()
+                x_ij[i] += epsilon
+                x_ij[j] += epsilon
+                fij = f(x_ij, y)
+                
+                x_i = x.copy()
+                x_i[i] += epsilon
+                fi = f(x_i, y)
+                
+                x_j = x.copy()
+                x_j[j] += epsilon
+                fj = f(x_j, y)
+                
+                Hessian[i, j] = (fij - fi - fj + fx) / (epsilon**2)
+                Hessian[j, i] = Hessian[i, j]
+                
+        return Hessian
+    
     def predict(self):
         # print('----------predict----------')
 
@@ -124,12 +151,27 @@ class GGF:
 
         for _ in range(n_iterations):
             P = np.linalg.inv(P_inv)
-            E_hessian = P_inv_prior + cal_mean(lambda x: self.loss_func_hessian(x, y), x_hat, P, self.points)
+            time1 = time.time()
+            # 0.01025 s
+            E_hessian = P_inv_prior + cal_mean(lambda x: self.loss_func_hessian_diff(x, y), x_hat, P, self.points)
+            time2 = time.time()
+            # 2.193e-05 s
             L = (1 - beta / 2) * L + beta / 2 * E_hessian @ np.linalg.inv(L).T
+            time3 = time.time()
+            # 2.145e-05 s
             P_inv_next = L @ L.T + epsilon * np.eye(self.dim_x)
             P_next = np.linalg.inv(P_inv_next)
-
+            time4 = time.time()
+            
+            # 0.0026s
             x_hat_next = x_hat - beta * (P_next @ cal_mean(lambda x: self.loss_func_jacobian(x, y), x_hat, P, self.points) - P_next @ P_inv_prior @ (x_hat - x_hat_prior))
+            time5 = time.time()
+            time_dict = {'E_hess': time2 - time1,
+                        'L_update': time3 - time2,
+                        'P_cal': time4 - time3,
+                        'x_cal': time5 - time4,
+                        'one_iter_time': time5 - time1}
+            # print(time_dict)
 
             P_inv = P_inv_next.copy()
             x_hat = x_hat_next.copy()
