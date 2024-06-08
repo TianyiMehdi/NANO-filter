@@ -10,13 +10,14 @@ import time
 # logging.basicConfig(level=logging.DEBUG)
 from scipy.optimize import minimize
 
-from .utils import is_positive_semidefinite, cal_mean, cal_mean_mc
+from .utils import is_positive_semidefinite, cal_mean, cal_mean_mc, kl_divergence
 
 class GGF:
 
     beta : float = 1.0
     gamma : float = 1.0
     epsilon: float = 1e-12
+    threshold: float = 0.1
 
     def __init__(self, model, loss_type = 'log_likelihood_loss', n_iterations=10):    
         self.model = model
@@ -49,19 +50,19 @@ class GGF:
     def log_likelihood_loss(self, x, y):
         return 0.5 * np.dot(y - self.h(x), np.dot(np.linalg.inv(self.R), y - self.h(x)))
     
-    def pseudo_huber_loss(self, x, y, delta=100):
+    def pseudo_huber_loss(self, x, y, delta=150):
         mse_loss = np.dot(y - self.h(x), np.dot(np.linalg.inv(self.R), y - self.h(x)))
 
         return delta**2 * (np.sqrt(1 + mse_loss / delta**2) - 1)
     
-    def weighted_log_likelihood_loss(self, x, y, c=2):
+    def weighted_log_likelihood_loss(self, x, y, c=0.1):
         mse_loss = np.dot(y - self.h(x), np.dot(np.linalg.inv(self.R), y - self.h(x)))
         weight = np.sqrt(1 + mse_loss / c**2)
         log_likelihood = -0.5 * (mse_loss + self.dim_y * np.log(2 * np.pi) + np.log(np.linalg.det(self.R)))
         
         return -weight * log_likelihood
     
-    def beta_likelihood_loss(self, x, y, beta=1e-5):
+    def beta_likelihood_loss(self, x, y, beta=5e-9):
         R_inv = np.linalg.inv(self.R)
         return 1 / ((beta + 1)**1.5*(2*np.pi)**(self.dim_y*beta/2))\
                 - (1 / beta) * 1 / ((2 * np.pi) ** (beta*self.dim_y/2)) * np.exp(-0.5*beta*(y-self.h(x)).T @ R_inv @ (y-self.h(x)))
@@ -172,6 +173,12 @@ class GGF:
                         'x_cal': time5 - time4,
                         'one_iter_time': time5 - time1}
             # print(time_dict)
+            kld = kl_divergence(x_hat, P, x_hat_next, P_next)
+            # print(_, " iteration: ", kld)
+            if kld < self.threshold:
+                P_inv = P_inv_next.copy()
+                x_hat = x_hat_next.copy()
+                break
 
             P_inv = P_inv_next.copy()
             x_hat = x_hat_next.copy()
