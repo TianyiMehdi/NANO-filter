@@ -10,7 +10,7 @@ import time
 # logging.basicConfig(level=logging.DEBUG)
 from scipy.optimize import minimize
 
-from .utils import is_positive_semidefinite, cal_mean
+from .utils import is_positive_semidefinite, cal_mean, cal_mean_mc
 
 class GGF:
 

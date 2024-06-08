@@ -1,4 +1,4 @@
-import numpy as np
+import autograd.numpy as np
 import warnings
 
 def is_positive_semidefinite(matrix):
@@ -29,3 +29,13 @@ def cal_mean(func, mean, var, points):
     
     mean_func = np.tensordot(points.Wm, sigmas_func, axes=([0], [0]))
     return mean_func
+
+def cal_mean_mc(func, mean, var, num_samples=100):
+    samples = np.random.multivariate_normal(mean, var, num_samples)
+    # 计算每个样本在函数 f 上的值
+    sample_values = np.apply_along_axis(func, 1, samples)
+    # print('1:', sample_values.shape)
+    # 计算样本值的平均值
+    expectation = np.mean(sample_values, axis=0)
+    # print('2:', expectation.shape)
+    return expectation
