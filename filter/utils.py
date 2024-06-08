@@ -39,3 +39,23 @@ def cal_mean_mc(func, mean, var, num_samples=100):
     expectation = np.mean(sample_values, axis=0)
     # print('2:', expectation.shape)
     return expectation
+
+def kl_divergence(mean0, cov0, mean1, cov1):
+    # 计算维数
+    k = mean0.shape[0]
+    
+    # 计算协方差矩阵的逆
+    cov1_inv = np.linalg.inv(cov1)
+    
+    # 计算两个分布均值之差
+    mean_diff = mean1 - mean0
+    
+    # 计算公式的每一部分
+    term1 = np.trace(np.dot(cov1_inv, cov0))
+    term2 = np.dot(np.dot(mean_diff.T, cov1_inv), mean_diff)
+    term3 = np.log(np.linalg.det(cov1) / np.linalg.det(cov0))
+    
+    # 计算 KL 散度
+    kl_div = 0.5 * (term1 + term2 - k + term3)
+    
+    return kl_div
