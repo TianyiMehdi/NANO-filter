@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     # exp arguments
     parser.add_argument("--N_exp", default=10, type=int, help="Number of the MC experiments")
-    parser.add_argument("--steps", default=50, type=int, help="Number of the steps in each trajectory")
+    parser.add_argument("--steps", default=100, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments
     args = parser.parse_args()

@@ -6,6 +6,7 @@ def is_positive_semidefinite(matrix):
         raise ValueError('Matrix is not square')
     
     eigenvalues = np.linalg.eigvals(matrix)
+    # print('Eigenvalues: ', eigenvalues)
     
     if np.any(eigenvalues < 0):
         print('Eigenvalues: ', eigenvalues)
@@ -30,7 +31,7 @@ def cal_mean(func, mean, var, points):
     mean_func = np.tensordot(points.Wm, sigmas_func, axes=([0], [0]))
     return mean_func
 
-def cal_mean_mc(func, mean, var, num_samples=100):
+def cal_mean_mc(func, mean, var, num_samples=10):
     samples = np.random.multivariate_normal(mean, var, num_samples)
     # 计算每个样本在函数 f 上的值
     sample_values = np.apply_along_axis(func, 1, samples)

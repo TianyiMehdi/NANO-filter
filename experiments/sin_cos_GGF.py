@@ -8,7 +8,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 sys.path.append("../")
 from filter import GGF, EKF, UKF
-from environ import Vehicle, Lorenz
+from environ import Vehicle, SinCos
 from save_and_plot import calculate_rmse, save_per_exp
 
 
@@ -19,8 +19,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
 
     # Add arguments
-    parser.add_argument("--filter_name", default="EKF", type=str, help="Name of the filter")
-    parser.add_argument("--model_name", default="Lorenz", type=str, help="Name of the model")
+    parser.add_argument("--filter_name", default="GGF", type=str, help="Name of the filter")
+    parser.add_argument("--model_name", default="SinCos", type=str, help="Name of the model")
     parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
@@ -29,11 +29,19 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
+    
+    if args.filter_name == "GGF":
+        parser.add_argument("--n_iterations", default=1, type=float, help="Iterations for GGF")
+    
+    if args.measurement_outlier_flag == False:
+        parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
+    else:
+        parser.add_argument("--loss_type", default='beta_likelihood_loss', type=str, help="Loss type for GGF")
 
     # exp arguments
     parser.add_argument("--N_exp", default=10, type=int, help="Number of the MC experiments")
@@ -45,8 +53,8 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    model = Lorenz()
-    filter = EKF(model)
+    model = SinCos(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'])
+    filter = GGF(model, loss_type=args_dict['loss_type'], n_iterations=args_dict['n_iterations'])
 
     x_mc = []
     y_mc = []

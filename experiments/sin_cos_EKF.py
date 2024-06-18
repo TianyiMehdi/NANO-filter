@@ -8,7 +8,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 sys.path.append("../")
 from filter import GGF, EKF, UKF
-from environ import Vehicle, Lorenz
+from environ import Vehicle, SinCos
 from save_and_plot import calculate_rmse, save_per_exp
 
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     # Add arguments
     parser.add_argument("--filter_name", default="EKF", type=str, help="Name of the filter")
-    parser.add_argument("--model_name", default="Vehicle", type=str, help="Name of the model")
+    parser.add_argument("--model_name", default="SinCos", type=str, help="Name of the model")
     parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    model = Vehicle(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'])
+    model = SinCos(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'])
     filter = EKF(model)
 
     x_mc = []

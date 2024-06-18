@@ -29,14 +29,14 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
 
     # exp arguments
-    parser.add_argument("--N_exp", default=10, type=int, help="Number of the MC experiments")
+    parser.add_argument("--N_exp", default=1, type=int, help="Number of the MC experiments")
     parser.add_argument("--steps", default=50, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments

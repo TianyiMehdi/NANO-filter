@@ -30,17 +30,21 @@ if __name__ == "__main__":
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
     parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
     
     if args.filter_name == "GGF":
-        parser.add_argument("--n_iterations", default=10, type=float, help="Iterations for GGF")
+        parser.add_argument("--n_iterations", default=0, type=float, help="Iterations for GGF")
+    
+    if args.measurement_outlier_flag == False:
+        parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
+    else:
+        parser.add_argument("--loss_type", default='beta_likelihood_loss', type=str, help="Loss type for GGF")
 
     # exp arguments
-    parser.add_argument("--N_exp", default=10, type=int, help="Number of the MC experiments")
+    parser.add_argument("--N_exp", default=1, type=int, help="Number of the MC experiments")
     parser.add_argument("--steps", default=50, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments

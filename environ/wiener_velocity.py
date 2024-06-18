@@ -16,13 +16,19 @@ class WienerVelocity:
         self.dim_x = self.F.shape[0]
         self.dim_y = self.H.shape[0]
         self.x0 = np.array([0., 0., 1., 1.])
-        self.P0 = 0.1 * np.eye(self.dim_x)
+        self.P0 = np.eye(self.dim_x)
 
         self.state_outlier_flag = state_outlier_flag
         self.measurement_outlier_flag = measurement_outlier_flag
-        self.var = np.array([1e-4, 1e-4, 1e-4, 1e-4])
-        self.obs_var = np.array([1e-4, 1e-4])
-        self.Q = np.diag(self.var)
+        dt = self.dt
+        self.var = np.array([1, 1, 1, 1])
+        self.obs_var = np.array([1, 1])
+        self.Q = np.array([
+            [dt**3/3, 0, dt**2/2, 0],
+            [0, dt**3/3, 0, dt**2/2],
+            [dt**2/2, 0, dt, 0],
+            [0, dt**2/2, 0, dt]
+        ])
         self.R = np.diag(self.obs_var)
 
 
@@ -42,7 +48,7 @@ class WienerVelocity:
     def f_withnoise(self, x):
         if self.state_outlier_flag:
             prob = np.random.rand()
-            if prob <= 0.95:
+            if prob <= 0.9:
                 cov = self.Q  # 95%概率使用Q
             else:
                 cov = 100 * self.Q  # 5%概率使用100Q
@@ -53,10 +59,10 @@ class WienerVelocity:
     def h_withnoise(self, x):
         if self.measurement_outlier_flag:
             prob = np.random.rand()
-            if prob <= 0.95:
+            if prob <= 0.9:
                 cov = self.R  # 95%概率使用R
             else:
-                cov = 100 * self.R  # 5%概率使用100R
+                cov = 1000 * self.R  # 5%概率使用100R
         else:
             cov = self.R
         return self.h(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_y), cov=cov)

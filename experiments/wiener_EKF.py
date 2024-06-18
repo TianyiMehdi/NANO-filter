@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     # exp arguments
     parser.add_argument("--N_exp", default=10, type=int, help="Number of the MC experiments")
-    parser.add_argument("--steps", default=50, type=int, help="Number of the steps in each trajectory")
+    parser.add_argument("--steps", default=100, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments
     args = parser.parse_args()
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    model = WienerVelocity()
+    model = WienerVelocity(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'])
     filter = EKF(model)
 
     x_mc = []
