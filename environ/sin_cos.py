@@ -7,7 +7,8 @@ class SinCos:
 
     dt : float = 1.0
 
-    def __init__(self, state_outlier_flag=False, measurement_outlier_flag=False):
+    def __init__(self, state_outlier_flag=False, 
+                measurement_outlier_flag=False, noise_type='Gaussian'):
 
         self.dim_x = 2
         self.dim_y = 2
@@ -16,6 +17,7 @@ class SinCos:
         
         self.state_outlier_flag = state_outlier_flag
         self.measurement_outlier_flag = measurement_outlier_flag
+        self.noise_type = noise_type
         self.Q = np.eye(self.dim_x)
         self.R = np.eye(self.dim_y)
         
@@ -44,15 +46,18 @@ class SinCos:
         return self.f(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_x), cov=cov)
     
     def h_withnoise(self, x):
-        if self.measurement_outlier_flag:
-            prob = np.random.rand()
-            if prob <= 0.9:
-                cov = self.R  # 95%概率使用R
+        if self.noise_type == 'Gaussian':
+            if self.measurement_outlier_flag:
+                prob = np.random.rand()
+                if prob <= 0.9:
+                    cov = self.R  # 95%概率使用R
+                else:
+                    cov = 100 * self.R  # 5%概率使用100R
             else:
-                cov = 100 * self.R  # 5%概率使用100R
+                cov = self.R
+            return self.h(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_y), cov=cov)
         else:
-            cov = self.R
-        return self.h(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_y), cov=cov)
+            return self.h(x) + np.random.laplace(loc=0, scale=1, size=(self.dim_y, ))
 
     def jac_f(self, x_hat):
         return jacobian(lambda x: self.f(x))(x_hat)

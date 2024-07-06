@@ -29,15 +29,18 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
     
     if args.filter_name == "GGF":
-        parser.add_argument("--n_iterations", default=1, type=float, help="Iterations for GGF")
+        parser.add_argument("--n_iterations", default=0, type=float, help="Iterations for GGF")
         parser.add_argument("--lr", default=1, type=float, help="Learning Rate for GGF")
+        parser.add_argument("--delta", default=5, type=float, help="HyperParameter for Huber loss")
+        parser.add_argument("--c", default=5, type=float, help="HyperParameter for Weight loss")
+        parser.add_argument("--beta", default=2e-2, type=float, help="HyperParameter for beta divergence")
     
     if args.measurement_outlier_flag == False:
         parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
@@ -48,7 +51,7 @@ if __name__ == "__main__":
         # parser.add_argument("--loss_type", default='beta_likelihood_loss', type=str, help="Loss type for GGF")
 
     # exp arguments
-    parser.add_argument("--N_exp", default=10, type=int, help="Number of the MC experiments")
+    parser.add_argument("--N_exp", default=100, type=int, help="Number of the MC experiments")
     parser.add_argument("--steps", default=50, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments
@@ -58,8 +61,10 @@ if __name__ == "__main__":
     np.random.seed(args_dict['random_seed'])
 
     lr = args_dict['lr']
-    model = Air_Traffic(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'])
-    filter = GGF(model, loss_type=args_dict['loss_type'], n_iterations=args_dict['n_iterations'])
+    model = Air_Traffic(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],
+                        args_dict['noise_name'])
+    filter = GGF(model, loss_type=args_dict['loss_type'], n_iterations=args_dict['n_iterations'],
+                delta=args_dict['delta'], c=args_dict['c'], beta=args_dict['beta'])
 
     x_mc = []
     y_mc = []
@@ -75,7 +80,7 @@ if __name__ == "__main__":
 
         x_list.append(x)
         y_list.append(y)
-        x_hat_list.append(filter.x)
+        x_hat_list.append(x)
 
         for i in range(1, args_dict['steps']):
             # generate data

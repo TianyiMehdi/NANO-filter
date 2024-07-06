@@ -8,7 +8,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 sys.path.append("../")
 from filter import GGF, EKF, UKF
-from environ import Vehicle, Lorenz
+from environ import Vehicle, SinCos
 from save_and_plot import calculate_rmse, save_per_exp
 
 
@@ -36,15 +36,19 @@ if __name__ == "__main__":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
     
     if args.filter_name == "GGF":
-        parser.add_argument("--n_iterations", default=0, type=float, help="Iterations for GGF")
+        parser.add_argument("--n_iterations", default=1, type=float, help="Iterations for GGF")
+        parser.add_argument("--lr", default=0.1, type=float, help="Learning Rate for GGF")
     
     if args.measurement_outlier_flag == False:
         parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
     else:
+        # parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
+        # parser.add_argument("--loss_type", default='pseudo_huber_loss', type=str, help="Loss type for GGF")
+        # parser.add_argument("--loss_type", default='weighted_log_likelihood_loss', type=str, help="Loss type for GGF")
         parser.add_argument("--loss_type", default='beta_likelihood_loss', type=str, help="Loss type for GGF")
 
     # exp arguments
-    parser.add_argument("--N_exp", default=1, type=int, help="Number of the MC experiments")
+    parser.add_argument("--N_exp", default=100, type=int, help="Number of the MC experiments")
     parser.add_argument("--steps", default=50, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments
@@ -53,7 +57,8 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    model = Vehicle(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'])
+    model = Vehicle(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'], 
+                    args_dict['noise_name'])
     filter = GGF(model, loss_type=args_dict['loss_type'], n_iterations=args_dict['n_iterations'])
 
     x_mc = []
@@ -70,9 +75,9 @@ if __name__ == "__main__":
 
         x_list.append(x)
         y_list.append(y)
-        x_hat_list.append(filter.x)
+        x_hat_list.append(x)
 
-        for i in tqdm(range(1, args_dict['steps'])):
+        for i in range(1, args_dict['steps']):
             # generate data
             x = model.f_withnoise(x)
             y = model.h_withnoise(x)
@@ -82,7 +87,7 @@ if __name__ == "__main__":
             time1 = time.time()
             # perform filtering
             filter.predict()
-            filter.update(y)
+            filter.update(y, lr=args_dict['lr'])
             time2 = time.time()
             x_hat_list.append(filter.x)
             run_time.append(time2 - time1)

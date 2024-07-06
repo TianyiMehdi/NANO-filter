@@ -10,7 +10,8 @@ class Air_Traffic:
     height = 50
     dt = 0.2
 
-    def __init__(self, state_outlier_flag=False, measurement_outlier_flag=False):
+    def __init__(self, state_outlier_flag=False, 
+                measurement_outlier_flag=False, noise_type='Gaussian'):
         q1 = self.q1
         q2 = self.q2
         height = self.height
@@ -23,6 +24,7 @@ class Air_Traffic:
 
         self.state_outlier_flag = state_outlier_flag
         self.measurement_outlier_flag = measurement_outlier_flag
+        self.noise_type = noise_type
         
         self.Q = np.array([
             [q1*tau**3/3, q1*tau**2/2, 0, 0, 0],
@@ -31,6 +33,7 @@ class Air_Traffic:
             [0, 0, q1*tau**2/2, q1*tau, 0],
             [0, 0, 0, 0, q2*tau],
         ])
+        self.obs_var = np.array([1000, (30*pi/180)**2, (30*pi/180)**2, 100])
         R1 = np.diag(np.array([1000, (30*pi/180)**2, (30*pi/180)**2, 100]))
         R2 = np.diag(np.array([1000, (1e-3*pi/180)**2, (30*pi/180)**2, 1e-4]))
         self.R = R1
@@ -68,15 +71,18 @@ class Air_Traffic:
         return self.f(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_x), cov=cov)
     
     def h_withnoise(self, x):
-        if self.measurement_outlier_flag:
-            prob = np.random.rand()
-            if prob <= 0.9:
-                cov = self.R  # 95%概率使用R
+        if self.noise_type == 'Gaussian':
+            if self.measurement_outlier_flag:
+                prob = np.random.rand()
+                if prob <= 0.9:
+                    cov = self.R  # 95%概率使用R
+                else:
+                    cov = 100 * self.R  # 5%概率使用100R
             else:
-                cov = 100 * self.R  # 5%概率使用100R
+                cov = self.R
+            return self.h(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_y), cov=cov)
         else:
-            cov = self.R
-        return self.h(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_y), cov=cov)
+            return self.h(x) + np.random.laplace(loc=0, scale=self.obs_var, size=(self.dim_y, ))
 
     def jac_f(self, x_hat):
         return jacobian(lambda x: self.f(x))(x_hat)

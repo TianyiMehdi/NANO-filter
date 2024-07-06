@@ -36,8 +36,8 @@ if __name__ == "__main__":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
 
     # exp arguments
-    parser.add_argument("--N_exp", default=10, type=int, help="Number of the MC experiments")
-    parser.add_argument("--steps", default=100, type=int, help="Number of the steps in each trajectory")
+    parser.add_argument("--N_exp", default=100, type=int, help="Number of the MC experiments")
+    parser.add_argument("--steps", default=150, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments
     args = parser.parse_args()
@@ -45,7 +45,8 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    model = WienerVelocity(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'])
+    model = WienerVelocity(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],
+                            args_dict['noise_name'])
     filter = UKF(model)
 
     x_mc = []
@@ -62,7 +63,7 @@ if __name__ == "__main__":
 
         x_list.append(x)
         y_list.append(y)
-        x_hat_list.append(filter.x)
+        x_hat_list.append(x)
 
         for i in range(1, args_dict['steps']):
             # generate data

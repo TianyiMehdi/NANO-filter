@@ -4,7 +4,8 @@ import autograd.numpy as np
 class WienerVelocity:
 
     dt : float = 0.1
-    def __init__(self, state_outlier_flag=False, measurement_outlier_flag=False):
+    def __init__(self, state_outlier_flag=False, 
+                measurement_outlier_flag=False, noise_type='Gaussian'):
         self.F = np.array([[1, 0, self.dt, 0],
                            [0, 1, 0, self.dt],
                            [0, 0, 1, 0],
@@ -20,6 +21,7 @@ class WienerVelocity:
 
         self.state_outlier_flag = state_outlier_flag
         self.measurement_outlier_flag = measurement_outlier_flag
+        self.noise_type = noise_type
         dt = self.dt
         self.var = np.array([1, 1, 1, 1])
         self.obs_var = np.array([1, 1])
@@ -57,12 +59,15 @@ class WienerVelocity:
         return self.f(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_x), cov=cov)
     
     def h_withnoise(self, x):
-        if self.measurement_outlier_flag:
-            prob = np.random.rand()
-            if prob <= 0.9:
-                cov = self.R  # 95%概率使用R
+        if self.noise_type == 'Gaussian':
+            if self.measurement_outlier_flag:
+                prob = np.random.rand()
+                if prob <= 0.9:
+                    cov = self.R  # 95%概率使用R
+                else:
+                    cov = 1000 * self.R  # 5%概率使用100R
             else:
-                cov = 1000 * self.R  # 5%概率使用100R
+                cov = self.R
+            return self.h(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_y), cov=cov)
         else:
-            cov = self.R
-        return self.h(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_y), cov=cov)
+            return self.h(x) + np.random.laplace(loc=0, scale=1, size=(self.dim_y, ))

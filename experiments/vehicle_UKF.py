@@ -8,7 +8,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 sys.path.append("../")
 from filter import GGF, EKF, UKF
-from environ import Vehicle, Lorenz
+from environ import Vehicle, SinCos
 from save_and_plot import calculate_rmse, save_per_exp
 
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # Add arguments
     parser.add_argument("--filter_name", default="UKF", type=str, help="Name of the filter")
     parser.add_argument("--model_name", default="Vehicle", type=str, help="Name of the model")
-    parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
+    parser.add_argument("--noise_name", default="Laplace", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
                         help='Different types to add outliers, "indirect" and "direct"')
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
 
     # exp arguments
-    parser.add_argument("--N_exp", default=1, type=int, help="Number of the MC experiments")
+    parser.add_argument("--N_exp", default=100, type=int, help="Number of the MC experiments")
     parser.add_argument("--steps", default=50, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments
@@ -45,7 +45,8 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    model = Vehicle(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'])
+    model = Vehicle(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'], 
+                    args_dict['noise_name'])
     filter = UKF(model)
 
     x_mc = []

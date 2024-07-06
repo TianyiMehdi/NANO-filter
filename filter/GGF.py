@@ -19,7 +19,8 @@ class GGF:
     epsilon: float = 1e-12
     threshold: float = 1e-4
 
-    def __init__(self, model, loss_type = 'log_likelihood_loss', n_iterations=10):    
+    def __init__(self, model, loss_type = 'log_likelihood_loss', 
+                        n_iterations=10, delta=5, c=5, beta=1e-4):    
         self.model = model
         self.dim_x = model.dim_x
         self.dim_y = model.dim_y    
@@ -29,8 +30,10 @@ class GGF:
         self.f = model.f
         self.h = model.h
         self.jac_f = model.jac_f
+        self.jac_h = model.jac_h
         self.Q = model.Q
         self.R = model.R
+        self._I = np.eye(self.dim_x)
 
         self.n_iterations = n_iterations
         self.points = MerweScaledSigmaPoints(self.dim_x, alpha=0.1, beta=2.0, kappa=1.0)
@@ -38,6 +41,10 @@ class GGF:
         self.P_prior = self.P
         self.x_post = self.x
         self.P_post = self.P
+
+        self.delta = delta
+        self.c = c
+        self.beta = beta
 
         if loss_type == 'pseudo_huber_loss':
             self.loss_func = self.pseudo_huber_loss
@@ -51,19 +58,22 @@ class GGF:
     def log_likelihood_loss(self, x, y):
         return 0.5 * np.dot(y - self.h(x), np.dot(np.linalg.inv(self.R), y - self.h(x)))
     
-    def pseudo_huber_loss(self, x, y, delta=10):
+    def pseudo_huber_loss(self, x, y):
+        delta = self.delta
         mse_loss = np.dot(y - self.h(x), np.dot(np.linalg.inv(self.R), y - self.h(x)))
 
         return delta**2 * (np.sqrt(1 + mse_loss / delta**2) - 1)
     
-    def weighted_log_likelihood_loss(self, x, y, c=20):
+    def weighted_log_likelihood_loss(self, x, y):
+        c = self.c
         mse_loss = 0.5 * np.dot(y - self.h(x), np.dot(np.linalg.inv(self.R), y - self.h(x)))
         weight = 1/(1 + mse_loss / c**2)
         # log_likelihood = -0.5 * (mse_loss + self.dim_y * np.log(2 * np.pi) + np.log(np.linalg.det(self.R)))
         
         return weight * mse_loss
     
-    def beta_likelihood_loss(self, x, y, beta=1e-3):
+    def beta_likelihood_loss(self, x, y):
+        beta = self.beta
         R_inv = np.linalg.inv(self.R)
         det_R = np.linalg.det(self.R)
         return 1 / ((beta + 1)**1.5*(2*np.pi)**(self.dim_y*beta/2)) * det_R**(beta / 2) \
@@ -77,7 +87,7 @@ class GGF:
         # cal hessian of loss function
         return hessian(lambda x: self.loss_func(x, y))(x)
     
-    def loss_func_hessian_diff(self, x, y, epsilon=1e-4):
+    def loss_func_hessian_diff(self, x, y, epsilon=5e-5):
         n = len(x)
         Hessian = np.zeros((n, n))
         f = self.loss_func
@@ -120,14 +130,6 @@ class GGF:
         self.x_prior = self.x.copy()
         self.P_prior = self.P.copy()
     
-    def predict_ekf(self):
-        F = self.jac_f(self.x)
-        self.x = self.f(self.x)
-        self.P = F @ self.P @ F.T + self.Q
-        
-        self.x_prior = self.x.copy()
-        self.P_prior = self.P.copy()
-    
     def map_loss(self, x_prior, P_prior, x_posterior, y):
         l1 = 0.5 * (x_posterior - x_prior).T @ np.linalg.inv(P_prior) @ (x_posterior - x_prior) 
         l2 = self.loss_func(x_posterior, y)
@@ -144,19 +146,44 @@ class GGF:
         
         return x_hat_posterior, P_posterior_inv
     
+    def update_iekf_init(self, y, x_prior, P_prior, max_iter=3):
+        x_hat = x_prior
+        for i in range(max_iter):
+            H = self.jac_h(x_hat)
+            hx = self.h(x_hat)
+            v = y - hx - H @ (x_prior - x_hat)
+            PHT = P_prior @ H.T
+            S = H @ PHT + self.R
+            K = PHT @ np.linalg.inv(S)
+            x_hat = x_prior + K @ v
+        
+        x_hat_posterior = x_hat
+        I_KH = self._I - K @ H
+        P_posterior = (I_KH @ P_prior @ I_KH.T) + (K @ self.R @ K.T)
+        P_posterior_inv = np.linalg.inv(P_posterior)
+        
+        return x_hat_posterior, P_posterior_inv
+    
+    
     def update(self, y, lr = None, n_iterations = None):
         # print('----------update----------')
         epsilon = self.epsilon
         if lr == None:
             lr = self.lr
-        
+        # print('lr:',lr)
         if n_iterations is None:
             n_iterations = self.n_iterations
+
+        R_inv = np.linalg.inv(self.R)
         
         # 求初始迭代步的Laplace近似后验估计
         x_hat_prior = self.x.copy()
         P_inv_prior = np.linalg.inv(self.P).copy()
+        time1 = time.time()
         x_hat, P_inv = self.update_init(y, x_hat_prior, self.P.copy())
+        # x_hat, P_inv = self.update_iekf_init(y, x_hat_prior, self.P.copy())
+        time2 = time.time()
+        # print("map time:", time2 - time1)
         # x_hat, P_inv = x_hat_prior, P_inv_prior
         is_positive_semidefinite(P_inv)
         # L = np.linalg.cholesky(P_inv)
@@ -167,15 +194,17 @@ class GGF:
 
 
             E_hessian = P_inv @ cal_mean(lambda x: np.outer(x-x_hat, x-x_hat)*self.loss_func(x,y), x_hat, P, self.points) @ P_inv \
-                        - P_inv * cal_mean(lambda x: self.loss_func(x, y), x_hat, P, self.points)
+                        - cal_mean(lambda x: self.loss_func(x, y), x_hat, P, self.points) * P_inv
             P_inv_next = P_inv_prior - lr * E_hessian
-            # P_inv_next = P_inv_prior + lr*cal_mean(lambda x: self.loss_func_hessian_diff(x, y), x_hat, np.linalg.inv(P_inv), self.points)
-            # G = P_inv_prior + cal_mean(lambda x: self.loss_func_hessian_diff(x, y), x_hat, np.linalg.inv(P_inv), self.points)
-            # P_inv_next = P_inv + beta * G + beta**2/2*G@P@G
+            # print('P_inv stein: ', P_inv_next)
+            # P_inv_next = P_inv_prior + lr*cal_mean(lambda x: self.loss_func_hessian_diff(x, y), x_hat, P, self.points)
+            # print('P_inv: ', P_inv_next)
             is_positive_semidefinite(P_inv_next)
             P_next = np.linalg.inv(P_inv_next)
 
-            x_hat_next = x_hat - lr*(P_next @ cal_mean(lambda x: self.loss_func_jacobian(x, y), x_hat, P, self.points) - P_next @ P_inv_prior @ (x_hat - x_hat_prior))
+            # x_hat_next = x_hat - lr*(P_next @ cal_mean(lambda x: self.loss_func_jacobian(x, y), x_hat, P, self.points) - P_next @ P_inv_prior @ (x_hat - x_hat_prior))
+            x_hat_next = x_hat - lr*(P_next @ P_inv @ cal_mean(lambda x: (x - x_hat) * self.loss_func(x, y), x_hat, P, self.points) - P_next @ P_inv_prior @ (x_hat - x_hat_prior))
+
 
             kld = kl_divergence(x_hat, P, x_hat_next, P_next)
             # print(_, " iteration: ", kld)
