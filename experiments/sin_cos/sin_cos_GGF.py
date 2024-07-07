@@ -8,7 +8,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 sys.path.append("../")
 from filter import GGF, EKF, UKF
-from environ import Vehicle, Air_Traffic, Sensor_Network
+from environ import Vehicle, SinCos
 from save_and_plot import calculate_rmse, save_per_exp
 
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     # Add arguments
     parser.add_argument("--filter_name", default="GGF", type=str, help="Name of the filter")
-    parser.add_argument("--model_name", default="Sensor_Network", type=str, help="Name of the model")
+    parser.add_argument("--model_name", default="SinCos", type=str, help="Name of the model")
     parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     if args.filter_name == "GGF":
         parser.add_argument("--n_iterations", default=1, type=float, help="Iterations for GGF")
         parser.add_argument("--lr", default=0.01, type=float, help="Learning Rate for GGF")
-        parser.add_argument("--delta", default=5, type=float, help="HyperParameter for Huber loss")
+        parser.add_argument("--delta", default=3, type=float, help="HyperParameter for Huber loss")
         parser.add_argument("--c", default=5, type=float, help="HyperParameter for Weight loss")
         parser.add_argument("--beta", default=2e-2, type=float, help="HyperParameter for beta divergence")
     
@@ -46,9 +46,9 @@ if __name__ == "__main__":
         parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
     else:
         # parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for GGF")
-        parser.add_argument("--loss_type", default='pseudo_huber_loss', type=str, help="Loss type for GGF")
+        # parser.add_argument("--loss_type", default='pseudo_huber_loss', type=str, help="Loss type for GGF")
         # parser.add_argument("--loss_type", default='weighted_log_likelihood_loss', type=str, help="Loss type for GGF")
-        # parser.add_argument("--loss_type", default='beta_likelihood_loss', type=str, help="Loss type for GGF")
+        parser.add_argument("--loss_type", default='beta_likelihood_loss', type=str, help="Loss type for GGF")
 
     # exp arguments
     parser.add_argument("--N_exp", default=100, type=int, help="Number of the MC experiments")
@@ -60,9 +60,8 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    lr = args_dict['lr']
-    model = Sensor_Network(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],
-                        args_dict['noise_name'])
+    model = SinCos(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'], 
+                    args_dict['noise_name'])
     filter = GGF(model, loss_type=args_dict['loss_type'], n_iterations=args_dict['n_iterations'],
                 delta=args_dict['delta'], c=args_dict['c'], beta=args_dict['beta'])
 
@@ -92,7 +91,7 @@ if __name__ == "__main__":
             time1 = time.time()
             # perform filtering
             filter.predict()
-            filter.update(y, lr=lr)
+            filter.update(y, lr=args_dict['lr'])
             time2 = time.time()
             x_hat_list.append(filter.x)
             run_time.append(time2 - time1)

@@ -29,11 +29,14 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
+    
+    if args.filter_name == "IEKF":
+        parser.add_argument("--max_iter", default=5, type=float, help="Parameter for iEKF")
 
     # exp arguments
     parser.add_argument("--N_exp", default=100, type=int, help="Number of the MC experiments")
@@ -47,7 +50,7 @@ if __name__ == "__main__":
 
     model = WienerVelocity(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],
                             args_dict['noise_name'])
-    filter = IEKF(model)
+    filter = IEKF(model, args_dict['max_iter'])
 
     x_mc = []
     y_mc = []

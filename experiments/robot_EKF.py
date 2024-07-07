@@ -7,8 +7,8 @@ import importlib
 import autograd.numpy as np
 from tqdm import tqdm
 sys.path.append("../")
-from filter import GGF, EKF, UKF, IEKF
-from environ import Vehicle, SinCos
+from filter import GGF, EKF, UKF
+from environ import RobotMove
 from save_and_plot import calculate_rmse, save_per_exp
 
 
@@ -19,8 +19,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
 
     # Add arguments
-    parser.add_argument("--filter_name", default="IEKF", type=str, help="Name of the filter")
-    parser.add_argument("--model_name", default="SinCos", type=str, help="Name of the model")
+    parser.add_argument("--filter_name", default="EKF", type=str, help="Name of the filter")
+    parser.add_argument("--model_name", default="RobotMove", type=str, help="Name of the model")
     parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
@@ -45,9 +45,9 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    model = SinCos(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'], 
-                    args_dict['noise_name'])
-    filter = IEKF(model)
+    model = RobotMove(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],
+                        args_dict['noise_name'])
+    filter = EKF(model)
 
     x_mc = []
     y_mc = []

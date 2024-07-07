@@ -97,7 +97,7 @@ class Vehicle:
         if self.noise_type == 'Gaussian':
             if self.measurement_outlier_flag:
                 prob = np.random.rand()
-                if prob <= 0.9:
+                if prob <= 0.95:
                     cov = self.R  # 95%概率使用R
                 else:
                     cov = 100 * self.R  # 5%概率使用100R
