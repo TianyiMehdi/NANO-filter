@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":

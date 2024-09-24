@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # Add arguments
     parser.add_argument("--filter_name", default="EKF", type=str, help="Name of the filter")
     parser.add_argument("--model_name", default="RobotMove", type=str, help="Name of the model")
-    parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
+    parser.add_argument("--noise_name", default="Beta", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
                         help='Different types to add outliers, "indirect" and "direct"')

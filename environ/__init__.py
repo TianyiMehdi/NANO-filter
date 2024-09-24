@@ -7,3 +7,4 @@ from .chemical_reaction import ChemicalReaction
 from .blackhole import BlackHole
 from .sensor_net import Sensor_Network
 from .robot_move import RobotMove
+from .ugv import UGV

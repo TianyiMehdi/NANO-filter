@@ -20,8 +20,8 @@ class EKF(ExtendedKalmanFilter):
         self.P = model.P0 
 
     def predict(self, u=0):
-        F = self.jac_f(self.x)
-        self.x = self.f(self.x)
+        F = self.jac_f(self.x, u)
+        self.x = self.f(self.x, u)
         self.P = F @ self.P @ F.T + self.Q
         
         self.x_prior = self.x.copy()

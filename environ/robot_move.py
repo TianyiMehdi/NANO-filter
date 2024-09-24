@@ -18,10 +18,15 @@ class RobotMove:
         self.state_outlier_flag = state_outlier_flag
         self.measurement_outlier_flag = measurement_outlier_flag
         self.noise_type = noise_type
+        self.alpha = 2.0
+        self.beta = 5.0
 
         self.obs_var = np.ones(self.dim_y) * 0.01
         self.Q = np.eye(self.dim_x) * 0.0025
-        self.R = np.eye(self.dim_y) * 0.01
+        if noise_type == 'Beta':
+            self.R = np.eye(self.dim_y) * (self.alpha * self.beta) / ((self.alpha + self.beta) ** 2 * (self.alpha + self.beta + 1))
+        else:
+            self.R = np.eye(self.dim_y) * 0.01
 
     def f(self, x, dt=None):
         if dt is None:
@@ -75,5 +80,9 @@ class RobotMove:
             else:
                 cov = self.R
             return self.h(x) + np.random.multivariate_normal(mean=np.zeros(self.dim_y), cov=cov)
+        elif self.noise_type == 'Beta':
+            noise = np.random.beta(self.alpha, self.beta, self.dim_y)
+            noise = noise - np.mean(noise)
+            return self.h(x) + noise
         else:
             return self.h(x) + np.random.laplace(loc=0, scale=self.obs_var, size=(self.dim_y, ))

@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # Add arguments
     parser.add_argument("--filter_name", default="GGF", type=str, help="Name of the filter")
     parser.add_argument("--model_name", default="WienerVelocity", type=str, help="Name of the model")
-    parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
+    parser.add_argument("--noise_name", default="Beta", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
                         help='Different types to add outliers, "indirect" and "direct"')
@@ -29,14 +29,14 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
     
     if args.filter_name == "GGF":
-        parser.add_argument("--n_iterations", default=1, type=float, help="Iterations for GGF")
+        parser.add_argument("--n_iterations", default=2, type=float, help="Iterations for GGF")
         parser.add_argument("--lr", default=1, type=float, help="Learning Rate for GGF")
         parser.add_argument("--delta", default=15, type=float, help="HyperParameter for Huber loss")
         parser.add_argument("--c", default=25, type=float, help="HyperParameter for Weight loss")

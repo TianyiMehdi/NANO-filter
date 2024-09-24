@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # Add arguments
     parser.add_argument("--filter_name", default="PLF", type=str, help="Name of the filter")
     parser.add_argument("--model_name", default="RobotMove", type=str, help="Name of the model")
-    parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
+    parser.add_argument("--noise_name", default="Beta", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
                         help='Different types to add outliers, "indirect" and "direct"')
@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     # env arguments
     parser.add_argument("--state_outlier_flag", default=False, type=bool, help="")
-    parser.add_argument("--measurement_outlier_flag", default=True, type=bool, help="")
+    parser.add_argument("--measurement_outlier_flag", default=False, type=bool, help="")
     args = parser.parse_args()
 
     if args.filter_name == "PF":

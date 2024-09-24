@@ -25,7 +25,7 @@ class PLF(UnscentedKalmanFilter):
         self.x = model.x0
         self.P = model.P0
         
-    def compute_process_sigmas(self, dt=None, fx=None):
+    def compute_process_sigmas(self, u=0, dt=None, fx=None):
 
         if fx is None:
             fx = self.fx
@@ -33,10 +33,10 @@ class PLF(UnscentedKalmanFilter):
         sigmas = self.points_fn.sigma_points(self.x, self.P)
 
         for i, s in enumerate(sigmas):
-            self.sigmas_f[i] = fx(s)
+            self.sigmas_f[i] = fx(s, u)
         
-    def predict(self):
-        self.compute_process_sigmas()
+    def predict(self, u=0):
+        self.compute_process_sigmas(u)
         #and pass sigmas through the unscented transform to compute prior
         self.x, self.P = UT(self.sigmas_f, self.Wm, self.Wc, self.Q,
                         self.x_mean, self.residual_x)

@@ -113,7 +113,7 @@ class GGF:
                 
         return Hessian
     
-    def predict(self):
+    def predict(self, u=0):
         # print('----------predict----------')
 
         # is_positive_semidefinite(self.P)
@@ -121,7 +121,7 @@ class GGF:
 
         self.sigmas_f = np.zeros((len(sigmas), self.dim_x))
         for i, s in enumerate(sigmas):
-            self.sigmas_f[i] = self.f(s)        
+            self.sigmas_f[i] = self.f(s, u)        
         
         self.x, self.P = UT(self.sigmas_f, self.points.Wm, self.points.Wc, self.Q)
 
@@ -146,7 +146,7 @@ class GGF:
         
         return x_hat_posterior, P_posterior_inv
     
-    def update_iekf_init(self, y, x_prior, P_prior, max_iter=3):
+    def update_iekf_init(self, y, x_prior, P_prior, max_iter=1):
         x_hat = x_prior
         for i in range(max_iter):
             H = self.jac_h(x_hat)
@@ -179,12 +179,9 @@ class GGF:
         # 求初始迭代步的Laplace近似后验估计
         x_hat_prior = self.x.copy()
         P_inv_prior = np.linalg.inv(self.P).copy()
-        time1 = time.time()
-        x_hat, P_inv = self.update_init(y, x_hat_prior, self.P.copy())
+        # x_hat, P_inv = self.update_init(y, x_hat_prior, self.P.copy())
         # x_hat, P_inv = self.update_iekf_init(y, x_hat_prior, self.P.copy())
-        time2 = time.time()
-        # print("map time:", time2 - time1)
-        # x_hat, P_inv = x_hat_prior, P_inv_prior
+        x_hat, P_inv = x_hat_prior, P_inv_prior
         is_positive_semidefinite(P_inv)
         # L = np.linalg.cholesky(P_inv)
 
