@@ -42,7 +42,11 @@ class UGV:
         obstacle = np.array(obstacle_info)
         der_x_robot = 0.329578
         rot = np.array([[np.cos(theta), np.sin(theta)], [-np.sin(theta), np.cos(theta)]])
-        obstacle_obs = (obstacle - x[:2]) @ rot.T - np.array([der_x_robot, 0])
+        dist = []
+        obstacle_obs = []
+        for M in obstacle:
+            obstacle_obs.append(((M - x[:2])@rot.T) - np.array([der_x_robot, 0]))
+        obstacle_obs = np.array(obstacle_obs)
         dist = np.linalg.norm(obstacle_obs, axis=1)
         angle = np.arctan2(obstacle_obs[:, 1], obstacle_obs[:, 0])
         return np.concatenate([dist, angle]) + np.array([-0.0312, -0.0581, -0.0557, 0.0053, 0.0059, 0.0125])

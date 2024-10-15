@@ -1,18 +1,16 @@
+import argparse
+import importlib
 import os
 import sys
 import time
-import argparse
-import importlib
 
 import autograd.numpy as np
 from tqdm import tqdm
+
 sys.path.append("../")
-from filter import GGF, EKF, UKF
-from environ import Vehicle, SinCos
+from environ import SinCos, Vehicle
+from filter import EKF, NANO, UKF
 from save_and_plot import calculate_rmse, save_per_exp
-
-
-
 
 if __name__ == "__main__":
     # Create the parser

@@ -1,0 +1,10 @@
+autograd==1.6.2
+dataclasses_json==0.6.7
+einops==0.8.0
+filterpy==1.4.5
+matplotlib==3.8.2
+numpy==2.1.2
+pandas==2.2.3
+scipy==1.14.1
+seaborn==0.13.2
+tqdm==4.66.1

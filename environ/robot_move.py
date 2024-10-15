@@ -46,7 +46,7 @@ class RobotMove:
         return np.array(hx)
         
 
-    def jac_f(self, x):
+    def jac_f(self, x, u=0):
         return np.array([[1, 0], [0, 1]])
 
     def jac_h(self, x):

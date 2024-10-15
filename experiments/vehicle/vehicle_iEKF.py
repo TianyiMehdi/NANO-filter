@@ -7,7 +7,7 @@ import importlib
 import autograd.numpy as np
 from tqdm import tqdm
 sys.path.append("../")
-from filter import GGF, EKF, UKF, IEKF
+from filter import NANO, EKF, UKF, IEKF
 from environ import Vehicle, SinCos
 from save_and_plot import calculate_rmse, save_per_exp
 

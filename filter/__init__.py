@@ -1,6 +1,6 @@
 from .EKF import EKF
 from .UKF import UKF
-from .GGF import GGF
+from .NANO import NANO
 from .HuberEKF import HuberEKF
 from .iEKF import IEKF
 from .PF import PF

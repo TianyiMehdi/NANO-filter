@@ -52,7 +52,7 @@ def save_per_exp(data_dict, **args_dict):
 
     # Create a directory named after the current date and time
     if data_dir is None:
-        data_dir = f"../results/{current_time}"
+        data_dir = f"/home/zhangtianyi/NANO-filter/results/{current_time}"
     os.makedirs(data_dir, exist_ok=True)
 
     # Create a file name for parameters based on 'filter_name', 'model_name', and 'noise_name' from the parameters dict
@@ -77,7 +77,7 @@ def plot_state_error(data_dir, filter_name, **data_dict):
     num_experiments, num_steps, num_states = x_mc.shape
 
     # 使用 Seaborn 的样式
-    plt.style.use('/home/zhangtianyi/Gibss-Gaussian-Filtering/style.mpl')
+    plt.style.use('/home/zhangtianyi/NANO-filter/style.mpl')
 
     # 对每个状态绘制一个误差图
     for state_index in range(num_states):
