@@ -27,21 +27,7 @@ pip install -r requirements.txt
 
 ## 2. Example: Wiener Velocity Model
 ### Model:
-$$
-\begin{aligned}
-x_{t+1} &= \begin{bmatrix}
-1 & 0 & \Delta t & 0 \\
-0 & 1 & 0 & \Delta t \\
-0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix} x_t+\xi_t,
-\\
-y_t &= \begin{bmatrix}
-1 & 0 & 0 & 0 \\
-0 & 1 & 0 & 0
-\end{bmatrix} x_t+\zeta_t .
-\end{aligned}
-$$
+![formula](./figures/formulas/wiener.png)
 
 ### Test:
 ```bash
@@ -61,23 +47,7 @@ python wiener/wiener_NANO.py \
 
 ## 3. Example: Air-Traffic Control Model
 ### Model:
-$$
-\begin{aligned}
-x_{t+1} &= \begin{bmatrix}
-1 & \frac{\sin \omega_t \Delta t}{\omega_t} & 0 & -\frac{1-\cos \omega_t \Delta t}{\Omega_t} & 0 \\
-0 & \cos \omega_t \Delta t & 0 & -\sin \omega_t \Delta t & 0 \\
-0 & \frac{1-\cos \omega_t \Delta t}{\omega_t} & 1 & \frac{\sin \omega_t \Delta t}{\omega_t} & 0 \\
-0 & \sin \omega_t \Delta t & 0 & \cos \omega_t \Delta t & 0 \\
-0 & 0 & 0 & 0 & 1
-\end{bmatrix} x_t+\xi_t, \\
-y_t &= \begin{bmatrix}
-\sqrt{p_{x,t}^2+p_{y,t}^2+h^2} \\
-\operatorname{atan}\left(\frac{p_{y,t}}{p_{x,t}}\right) \\
-\operatorname{atan}\left(\frac{h}{\sqrt{p_{x,t}^2+p_{y,t}^2}}\right) \\
-\frac{p_{x,t} \dot{p}_{x,t}+p_{y,t} \dot{p}_{y,t}}{\sqrt{p_{x,t}^2+p_{y,t}^2+h^2}}
-\end{bmatrix}+\zeta_t . \\
-\end{aligned}
-$$
+
 
 ### Test:
 ```bash
@@ -98,24 +68,6 @@ python wiener/wiener_NANO.py \
 
 ## 4. Example: Unmanned Ground Vehicle Localization
 ### Model:
-$$
-\begin{aligned}
-    \begin{bmatrix}
-        p_{x,t+1}\\
-        p_{y,t+1}\\
-        \theta_{t+1}
-\end{bmatrix}&=\begin{bmatrix}
-        p_{x,t}\\
-        p_{y,t}\\
-        \theta_t
-    \end{bmatrix} + \begin{bmatrix}
-        v_t \cdot \cos\theta_t\\
-        v_t \cdot \sin\theta_t\\
-        \omega_t
-    \end{bmatrix}\cdot\Delta t + \xi_t, \\
-    y_t &= [d^1_t \ d^2_t \ d^3_t \ \alpha^1_t \ \alpha^2_t \ \alpha^3_t]^\top + \zeta_t,
-\end{aligned}
-$$
 
 ### Test:
 ```bash
