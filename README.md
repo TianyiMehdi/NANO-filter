@@ -73,6 +73,7 @@ x_{t+1} &= \begin{bmatrix}
 0 & \sin \omega_t \Delta t & 0 & \cos \omega_t \Delta t & 0 \\
 0 & 0 & 0 & 0 & 1
 \end{bmatrix} x_t+\xi_t, 
+\end{aligned}
 $$
 
 ### Test:
