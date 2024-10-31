@@ -72,14 +72,7 @@ x_{t+1} &= \begin{bmatrix}
 0 & \frac{1-\cos \omega_t \Delta t}{\omega_t} & 1 & \frac{\sin \omega_t \Delta t}{\omega_t} & 0 \\
 0 & \sin \omega_t \Delta t & 0 & \cos \omega_t \Delta t & 0 \\
 0 & 0 & 0 & 0 & 1
-\end{bmatrix} x_t+\xi_t, \\
-y_t &= \begin{bmatrix}
-\sqrt{p_{x,t}^2+p_{y,t}^2+h^2} \\
-\mathrm{atan}\left(\frac{p_{y,t}}{p_{x,t}}\right) \\
-\mathrm{atan}\left(\frac{h}{\sqrt{p_{x,t}^2+p_{y,t}^2}}\right) \\
-\frac{p_{x,t} \dot{p}_{x,t}+p_{y,t} \dot{p}_{y,t}}{\sqrt{p_{x,t}^2+p_{y,t}^2+h^2}}
-\end{bmatrix}+\zeta_t 
-\end{aligned}
+\end{bmatrix} x_t+\xi_t, 
 $$
 
 ### Test:
