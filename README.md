@@ -75,8 +75,8 @@ x_{t+1} &= \begin{bmatrix}
 \end{bmatrix} x_t+\xi_t, \\
 y_t &= \begin{bmatrix}
 \sqrt{p_{x,t}^2+p_{y,t}^2+h^2} \\
-\operatorname{atan}\left(\frac{p_{y,t}}{p_{x,t}}\right) \\
-\operatorname{atan}\left(\frac{h}{\sqrt{p_{x,t}^2+p_{y,t}^2}}\right) \\
+\mathrm{atan}\left(\frac{p_{y,t}}{p_{x,t}}\right) \\
+\mathrm{atan}\left(\frac{h}{\sqrt{p_{x,t}^2+p_{y,t}^2}}\right) \\
 \frac{p_{x,t} \dot{p}_{x,t}+p_{y,t} \dot{p}_{y,t}}{\sqrt{p_{x,t}^2+p_{y,t}^2+h^2}}
 \end{bmatrix}+\zeta_t . \\
 \end{aligned}
