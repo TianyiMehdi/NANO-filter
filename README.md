@@ -47,7 +47,7 @@ python wiener/wiener_NANO.py \
 
 ## 3. Example: Air-Traffic Control Model
 ### Model:
-
+![formula](./figures/formulas/air_traffic.png)
 
 ### Test:
 ```bash
@@ -68,6 +68,7 @@ python wiener/wiener_NANO.py \
 
 ## 4. Example: Unmanned Ground Vehicle Localization
 ### Model:
+![formula](./figures/formulas/ugv.png)
 
 ### Test:
 ```bash
