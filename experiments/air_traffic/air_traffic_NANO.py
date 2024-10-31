@@ -35,17 +35,17 @@ if __name__ == "__main__":
     if args.filter_name == "NANO":
         parser.add_argument("--n_iterations", default=1, type=float, help="Iterations for NANO")
         parser.add_argument("--lr", default=1, type=float, help="Learning Rate for NANO")
+        parser.add_argument("--init_type", default='iekf', type=str, help="Initialization type for Natural Gradient iteration")
+        # init_type: 'prior', 'laplace', 'iekf'; usually 'prior' for linear and low nonlinearity system, 'iekf' for high nonlinearity system
+        parser.add_argument("--derivate_type", default='stein', type=str, help="Derivate type for Natural Gradient iteration")
+        # derivate_type: 'direct', 'stein'; 'direct' for linear and low nonlinearity system, 'stein' for high nonlinearity system
+        parser.add_argument("--iekf_max_iter", default=1, type=float, help="Iterations for iekf init")
+
+        parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for NANO")
+        # loss_type: 'log_likelihood_loss', 'pseudo_huber_loss', 'weighted_log_likelihood_loss', 'beta_likelihood_loss'
         parser.add_argument("--delta", default=5, type=float, help="HyperParameter for Huber loss")
         parser.add_argument("--c", default=5, type=float, help="HyperParameter for Weight loss")
         parser.add_argument("--beta", default=2e-2, type=float, help="HyperParameter for beta divergence")
-    
-    if args.measurement_outlier_flag == False:
-        parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for NANO")
-    else:
-        # parser.add_argument("--loss_type", default='log_likelihood_loss', type=str, help="Loss type for NANO")
-        parser.add_argument("--loss_type", default='pseudo_huber_loss', type=str, help="Loss type for NANO")
-        # parser.add_argument("--loss_type", default='weighted_log_likelihood_loss', type=str, help="Loss type for NANO")
-        # parser.add_argument("--loss_type", default='beta_likelihood_loss', type=str, help="Loss type for NANO")
 
     # exp arguments
     parser.add_argument("--N_exp", default=100, type=int, help="Number of the MC experiments")
@@ -60,8 +60,9 @@ if __name__ == "__main__":
     lr = args_dict['lr']
     model = Air_Traffic(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],
                         args_dict['noise_name'])
-    filter = NANO(model, loss_type=args_dict['loss_type'], n_iterations=args_dict['n_iterations'],
-                delta=args_dict['delta'], c=args_dict['c'], beta=args_dict['beta'])
+    filter = NANO(model, loss_type=args_dict['loss_type'], init_type=args_dict['init_type'], 
+                  derivate_type=args_dict['derivate_type'], iekf_max_iter=args_dict['iekf_max_iter'],
+                  n_iterations=args_dict['n_iterations'], delta=args_dict['delta'], c=args_dict['c'], beta=args_dict['beta'])
 
     x_mc = []
     y_mc = []

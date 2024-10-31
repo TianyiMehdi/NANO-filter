@@ -2,14 +2,15 @@ import autograd.numpy as np
 from autograd import jacobian, hessian
 from autograd.numpy import sin, cos, arctan, pi, arctan2, sqrt
 from data_processing import load_data
+from .model import Model
 
-class UGV:
+class UGV(Model):
 
     dt : float = 1.0 / 15
 
     def __init__(self, state_outlier_flag=False, 
                 measurement_outlier_flag=False, noise_type='Gaussian'):
-        
+        super().__init__(self)
         self.dim_x = 3
         self.dim_y = 6
         self.x0 = np.array([0., 0., 0.])

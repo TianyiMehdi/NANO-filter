@@ -8,7 +8,8 @@ import autograd.numpy as np
 from tqdm import tqdm
 sys.path.append("../")
 from filter import NANO, EKF, UKF
-from environ import Vehicle, Lorenz, WienerVelocity
+from environ import UGV2
+from data_processing import load_data
 from save_and_plot import calculate_rmse, save_per_exp
 
 
@@ -20,7 +21,7 @@ if __name__ == "__main__":
 
     # Add arguments
     parser.add_argument("--filter_name", default="EKF", type=str, help="Name of the filter")
-    parser.add_argument("--model_name", default="WienerVelocity", type=str, help="Name of the model")
+    parser.add_argument("--model_name", default="UGV2", type=str, help="Name of the model")
     parser.add_argument("--noise_name", default="Gaussian", type=str, help="Name of the model")
     parser.add_argument("--result_dir", default=None, type=str, help="Save dir")
     parser.add_argument("--outlier_type", default='direct', type=str,
@@ -36,8 +37,8 @@ if __name__ == "__main__":
         parser.add_argument("--N_particles", default=100, type=float, help="Parameter for PF")
 
     # exp arguments
-    parser.add_argument("--N_exp", default=100, type=int, help="Number of the MC experiments")
-    parser.add_argument("--steps", default=150, type=int, help="Number of the steps in each trajectory")
+    parser.add_argument("--N_exp", default=46, type=int, help="Number of the MC experiments")
+    parser.add_argument("--steps", default=101, type=int, help="Number of the steps in each trajectory")
 
     # Parse the arguments
     args = parser.parse_args()
@@ -45,36 +46,48 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    model = WienerVelocity(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],
-                            args_dict['noise_name'])
+    filepath_list=['/home/zhangtianyi/Gibss-Gaussian-Filtering/data_processing/20230216-140452.npz',
+                '/home/zhangtianyi/Gibss-Gaussian-Filtering/data_processing/20230216-141321.npz',
+                '/home/zhangtianyi/Gibss-Gaussian-Filtering/data_processing/20230216-141616.npz',
+                '/home/zhangtianyi/Gibss-Gaussian-Filtering/data_processing/20230216-142042.npz']
+
+    measurement_outlier_flag = args_dict['measurement_outlier_flag']
+    model = UGV2(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],
+                        args_dict['noise_name'])
     filter = EKF(model)
+    
+    x_lists, y_lists, u_lists, x0_lists = model.get_sensor_data(filepath_list, min_len=args_dict['steps'])
+    N_exp = len(x_lists)
 
     x_mc = []
     y_mc = []
     x_hat_mc = []
     all_time = []
 
-    for _ in tqdm(range(args_dict['N_exp'])):
-        x_list, y_list, x_hat_list = [], [], []
+    for n in tqdm(range(N_exp)):
+        x_list, y_list, u_list, x0 = x_lists[n], y_lists[n], u_lists[n], x0_lists[n]
+        x_hat_list = []
         run_time = []
         # initialize system
-        x = model.x0
-        y = model.h_withnoise(x)
+        x = x0
+        y = y_list[0]
+        filter.x = x0
+        filter.P = np.diag(np.array([0.0001, 0.0001, 0.0001])) ** 2
 
-        x_list.append(x)
-        y_list.append(y)
         x_hat_list.append(x)
 
         for i in range(1, args_dict['steps']):
-            # generate data
-            x = model.f_withnoise(x)
-            y = model.h_withnoise(x)
-            x_list.append(x)
-            y_list.append(y)
-
+            u = u_list[i]
+            y = y_list[i]
+            y = y[:3]
+            if measurement_outlier_flag:
+                prob = np.random.rand()
+                if prob <= 0.01:
+                    random_number = np.random.randint(0, 2)
+                    y[random_number] = 20
             time1 = time.time()
             # perform filtering
-            filter.predict()
+            filter.predict(u)
             filter.update(y)
             time2 = time.time()
             x_hat_list.append(filter.x)

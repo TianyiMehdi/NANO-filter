@@ -46,10 +46,10 @@ if __name__ == "__main__":
 
     np.random.seed(args_dict['random_seed'])
 
-    filepath_list=['/home/zhangtianyi/Gibss-Gaussian-Filtering/data_processing/20230216-140452.npz',
-                '/home/zhangtianyi/Gibss-Gaussian-Filtering/data_processing/20230216-141321.npz',
-                '/home/zhangtianyi/Gibss-Gaussian-Filtering/data_processing/20230216-141616.npz',
-                '/home/zhangtianyi/Gibss-Gaussian-Filtering/data_processing/20230216-142042.npz']
+    filepath_list=['/home/zhangtianyi/NANO-filter/data_processing/20230216-140452.npz',
+                '/home/zhangtianyi/NANO-filter/data_processing/20230216-141321.npz',
+                '/home/zhangtianyi/NANO-filter/data_processing/20230216-141616.npz',
+                '/home/zhangtianyi/NANO-filter/data_processing/20230216-142042.npz']
 
     measurement_outlier_flag = args_dict['measurement_outlier_flag']
     model = UGV(args_dict['state_outlier_flag'], args_dict['measurement_outlier_flag'],

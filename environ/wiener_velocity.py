@@ -1,11 +1,13 @@
 import autograd.numpy as np
+from .model import Model
 
 
-class WienerVelocity:
+class WienerVelocity(Model):
 
     dt : float = 0.1
     def __init__(self, state_outlier_flag=False, 
                 measurement_outlier_flag=False, noise_type='Gaussian'):
+        super().__init__(self)
         self.F = np.array([[1, 0, self.dt, 0],
                            [0, 1, 0, self.dt],
                            [0, 0, 1, 0],
@@ -47,7 +49,7 @@ class WienerVelocity:
     def h(self, x):
         return self.H @ x
 
-    def jac_f(self, x):
+    def jac_f(self, x, u=None):
         return self.F
 
     def jac_h(self, x):
