@@ -65,8 +65,6 @@ python wiener/wiener_NANO.py \
 ## 3. Example: Air-Traffic Control Model
 ### Model:
 $$
-\begin{equation}
-\nonumber
 \begin{aligned}
 x_{t+1} &= \begin{bmatrix}
 1 & \frac{\sin \omega_t \Delta t}{\omega_t} & 0 & -\frac{1-\cos \omega_t \Delta t}{\Omega_t} & 0 \\
@@ -82,7 +80,6 @@ y_t &= \begin{bmatrix}
 \frac{p_{x,t} \dot{p}_{x,t}+p_{y,t} \dot{p}_{y,t}}{\sqrt{p_{x,t}^2+p_{y,t}^2+h^2}}
 \end{bmatrix}+\zeta_t . \\
 \end{aligned}
-\end{equation}
 $$
 
 ### Test:
