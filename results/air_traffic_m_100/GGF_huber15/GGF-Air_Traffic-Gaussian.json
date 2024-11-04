@@ -1,0 +1,23 @@
+{
+    "filter_name": "NANO",
+    "model_name": "Air_Traffic",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": true,
+    "n_iterations": 1,
+    "lr": 1,
+    "loss_type": "pseudo_huber_loss",
+    "N_exp": 100,
+    "steps": 50,
+    "x_rmse": [
+        59.08250913477336,
+        13.476725943014433,
+        47.036176240849265,
+        5.017591290761046,
+        0.002345732512178636
+    ],
+    "time": 0.02797496815117038
+}

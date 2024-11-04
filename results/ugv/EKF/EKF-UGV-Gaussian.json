@@ -1,0 +1,18 @@
+{
+    "filter_name": "EKF",
+    "model_name": "UGV",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": false,
+    "N_exp": 46,
+    "steps": 101,
+    "x_rmse": [
+        0.1043018535502396,
+        0.06556601889996026,
+        0.02298232581921685
+    ],
+    "time": 0.0008095805541328764
+}

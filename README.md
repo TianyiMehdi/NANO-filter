@@ -49,9 +49,7 @@ $$
 ```bash
 cd experiments
 # 1. For system without outlier
-python wiener/wiener_NANO.py \
-    --measurement_outlier_flag False \
-    --n_iterations 1 \
+python wiener/wiener_NANO.py
 # 2. For system with outlier, and you can try to change the loss_type and loss hyperparameters to see the difference 
 python wiener/wiener_NANO.py \
     --measurement_outlier_flag True \
@@ -64,8 +62,6 @@ python wiener/wiener_NANO.py \
 ## 3. Example: Air-Traffic Control Model
 ### Model:
 $$
-\begin{equation}
-\nonumber
 \begin{aligned}
 x_{t+1} &= \begin{bmatrix}
 1 & \frac{\sin \omega_t \Delta t}{\omega_t} & 0 & -\frac{1-\cos \omega_t \Delta t}{\Omega_t} & 0 \\
@@ -76,21 +72,18 @@ x_{t+1} &= \begin{bmatrix}
 \end{bmatrix} x_t+\xi_t, \\
 y_t &= \begin{bmatrix}
 \sqrt{p_{x,t}^2+p_{y,t}^2+h^2} \\
-\operatorname{atan}\left(\frac{p_{y,t}}{p_{x,t}}\right) \\
-\operatorname{atan}\left(\frac{h}{\sqrt{p_{x,t}^2+p_{y,t}^2}}\right) \\
+\mathrm{atan}\left(\frac{p_{y,t}}{p_{x,t}}\right) \\
+\mathrm{atan}\left(\frac{h}{\sqrt{p_{x,t}^2+p_{y,t}^2}}\right) \\
 \frac{p_{x,t} \dot{p}_{x,t}+p_{y,t} \dot{p}_{y,t}}{\sqrt{p_{x,t}^2+p_{y,t}^2+h^2}}
 \end{bmatrix}+\zeta_t . \\
 \end{aligned}
-\end{equation}
 $$
 
 ### Test:
 ```bash
 cd experiments
 # 1. For system without outlier
-python air_traffic/air_traffic_NANO.py \
-    --measurement_outlier_flag False \
-    --n_iterations 1 \
+python air_traffic/air_traffic_NANO.py
 # 2. For system with outlier, and you can try to change the loss_type and loss hyperparameters to see the difference 
 python wiener/wiener_NANO.py \
     --measurement_outlier_flag True \

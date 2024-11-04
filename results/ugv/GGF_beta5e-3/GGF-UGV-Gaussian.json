@@ -1,0 +1,24 @@
+{
+    "filter_name": "NANO",
+    "model_name": "UGV",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": false,
+    "n_iterations": 1,
+    "lr": 0.5,
+    "delta": 1,
+    "c": 8,
+    "beta": 0.005,
+    "loss_type": "beta_likelihood_loss",
+    "N_exp": 46,
+    "steps": 101,
+    "x_rmse": [
+        0.03909268805445078,
+        0.04289222506411439,
+        0.010442070714313528
+    ],
+    "time": 0.00247855544090271
+}

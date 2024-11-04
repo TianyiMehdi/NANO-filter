@@ -1,0 +1,18 @@
+{
+    "filter_name": "UKF",
+    "model_name": "UGV",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": false,
+    "N_exp": 46,
+    "steps": 101,
+    "x_rmse": [
+        0.10430315124484527,
+        0.06555424416171528,
+        0.022982202016894406
+    ],
+    "time": 0.0004478948012642238
+}

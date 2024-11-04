@@ -1,0 +1,17 @@
+{
+    "filter_name": "EKF",
+    "model_name": "SinCos",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": true,
+    "N_exp": 10,
+    "steps": 50,
+    "x_rmse": [
+        2.3469054119620725,
+        2.153188251855711
+    ],
+    "time": 0.00024232913036735694
+}

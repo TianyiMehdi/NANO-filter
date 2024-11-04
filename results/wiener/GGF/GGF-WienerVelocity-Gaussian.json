@@ -1,0 +1,22 @@
+{
+    "filter_name": "NANO",
+    "model_name": "WienerVelocity",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": false,
+    "n_iterations": 1,
+    "lr": 1,
+    "loss_type": "log_likelihood_loss",
+    "N_exp": 100,
+    "steps": 150,
+    "x_rmse": [
+        2.713979740283093,
+        3.1463178758043866,
+        5.095814078512811,
+        5.966131051641721
+    ],
+    "time": 0.0027688653997126837
+}

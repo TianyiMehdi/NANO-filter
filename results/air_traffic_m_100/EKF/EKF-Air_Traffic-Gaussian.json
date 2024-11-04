@@ -1,0 +1,20 @@
+{
+    "filter_name": "EKF",
+    "model_name": "Air_Traffic",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": true,
+    "N_exp": 100,
+    "steps": 50,
+    "x_rmse": [
+        88.21321651083088,
+        17.08827279923956,
+        88.74933937141488,
+        9.606662413303981,
+        0.033476905220220295
+    ],
+    "time": 0.0014266262249070774
+}

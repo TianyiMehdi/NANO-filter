@@ -1,0 +1,20 @@
+{
+    "filter_name": "UKF",
+    "model_name": "Air_Traffic",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": true,
+    "N_exp": 100,
+    "steps": 50,
+    "x_rmse": [
+        82.5076023961714,
+        17.040791213574213,
+        87.43357249928873,
+        9.509664597173483,
+        0.03287080292399857
+    ],
+    "time": 0.0006593908095846371
+}

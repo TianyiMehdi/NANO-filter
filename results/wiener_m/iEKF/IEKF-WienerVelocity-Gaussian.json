@@ -1,0 +1,20 @@
+{
+    "filter_name": "IEKF",
+    "model_name": "WienerVelocity",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": true,
+    "max_iter": 5,
+    "N_exp": 100,
+    "steps": 150,
+    "x_rmse": [
+        5.173731260313598,
+        5.125881680264091,
+        7.292448975846152,
+        7.392573492228479
+    ],
+    "time": 5.294538984362711e-05
+}

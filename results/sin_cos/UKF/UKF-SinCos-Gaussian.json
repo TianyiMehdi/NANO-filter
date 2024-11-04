@@ -1,0 +1,17 @@
+{
+    "filter_name": "UKF",
+    "model_name": "SinCos",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": false,
+    "N_exp": 100,
+    "steps": 50,
+    "x_rmse": [
+        1.103894225700703,
+        1.0678201420174531
+    ],
+    "time": 0.00012864983811670418
+}

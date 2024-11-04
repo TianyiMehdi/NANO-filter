@@ -1,0 +1,20 @@
+{
+    "filter_name": "NANO",
+    "model_name": "SinCos",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": true,
+    "n_iterations": 1,
+    "lr": 0.5,
+    "loss_type": "pseudo_huber_loss",
+    "N_exp": 100,
+    "steps": 50,
+    "x_rmse": [
+        1.3355181719813627,
+        1.3046219183315546
+    ],
+    "time": 0.004391885290340502
+}

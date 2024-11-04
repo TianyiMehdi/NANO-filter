@@ -1,0 +1,20 @@
+{
+    "filter_name": "IEKF",
+    "model_name": "Air_Traffic",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": true,
+    "N_exp": 100,
+    "steps": 50,
+    "x_rmse": [
+        100.62601203346665,
+        17.84148935689399,
+        82.62470914707616,
+        9.510330803920061,
+        0.023646378110027406
+    ],
+    "time": 0.0020150122837144504
+}

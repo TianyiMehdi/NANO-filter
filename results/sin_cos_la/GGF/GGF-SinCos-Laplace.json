@@ -1,0 +1,20 @@
+{
+    "filter_name": "NANO",
+    "model_name": "SinCos",
+    "noise_name": "Laplace",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": false,
+    "n_iterations": 1,
+    "lr": 0.1,
+    "loss_type": "log_likelihood_loss",
+    "N_exp": 100,
+    "steps": 50,
+    "x_rmse": [
+        1.1538096790845247,
+        1.068166368596304
+    ],
+    "time": 0.0038240141284709077
+}

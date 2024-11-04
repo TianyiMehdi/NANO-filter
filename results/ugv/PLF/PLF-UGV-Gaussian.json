@@ -1,0 +1,18 @@
+{
+    "filter_name": "PLF",
+    "model_name": "UGV",
+    "noise_name": "Gaussian",
+    "result_dir": null,
+    "outlier_type": "direct",
+    "random_seed": 42,
+    "state_outlier_flag": false,
+    "measurement_outlier_flag": false,
+    "N_exp": 46,
+    "steps": 101,
+    "x_rmse": [
+        0.10429693985296846,
+        0.06551725460377844,
+        0.022977586885309712
+    ],
+    "time": 0.0008708384762639585
+}
