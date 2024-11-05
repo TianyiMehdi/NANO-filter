@@ -2,14 +2,15 @@ from dataclasses import dataclass
 import autograd.numpy as np
 from autograd import jacobian, hessian
 from autograd.numpy import sin, cos, arctan, pi, arctan2
+from .model import Model
 
-class SinCos:
+class SinCos(Model):
 
     dt : float = 1.0
 
     def __init__(self, state_outlier_flag=False, 
                 measurement_outlier_flag=False, noise_type='Gaussian'):
-
+        super().__init__(self)
         self.dim_x = 2
         self.dim_y = 2
         self.P0 = 25 * np.eye(self.dim_x)

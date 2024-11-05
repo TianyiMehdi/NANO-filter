@@ -1,6 +1,7 @@
 import autograd.numpy as np
 from autograd import jacobian, hessian
 from autograd.numpy import sin, cos, arctan, pi, arctan2
+from .model import Model
 
 landmarks = np.array([
     [0, 0], [0, 25], [0, 50], [0, 75], [0, 100],
@@ -10,11 +11,12 @@ landmarks = np.array([
     [100, 0], [100, 25], [100, 50], [100, 75], [100, 100],
 ])
 
-class Sensor_Network:
+class Sensor_Network(Model):
 
     dt : float = 0.5
     def __init__(self, state_outlier_flag=False, 
                 measurement_outlier_flag=False, noise_type='Gaussian'):
+        super().__init__(self)
         dt = self.dt
         self.F = np.array([[1, 0, dt, 0],
                            [0, 1, 0, dt],

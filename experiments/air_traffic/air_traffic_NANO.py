@@ -7,7 +7,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 
 sys.path.append("../")
-from environ import Air_Traffic, Vehicle
+from environ import Air_Traffic
 from filter import EKF, NANO, UKF
 from save_and_plot import calculate_rmse, save_per_exp
 

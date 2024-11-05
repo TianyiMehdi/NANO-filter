@@ -8,7 +8,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 
 sys.path.append("../")
-from environ import Lorenz, Vehicle, WienerVelocity
+from environ import WienerVelocity
 from filter import EKF, NANO, UKF
 from save_and_plot import calculate_rmse, save_per_exp
 

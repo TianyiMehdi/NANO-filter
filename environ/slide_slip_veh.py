@@ -2,10 +2,10 @@ from dataclasses import dataclass
 import autograd.numpy as np
 from autograd import jacobian, hessian
 from autograd.numpy import sin, cos, arctan
+from .model import Model
 
 
-@dataclass
-class Vehicle:
+class Vehicle(Model):
     """Vehicle config for the slide-slip vehicle model.
     """
     # Vehicle parameters
@@ -23,6 +23,7 @@ class Vehicle:
 
     def __init__(self, state_outlier_flag=False, 
                 measurement_outlier_flag=False, noise_type='Gaussian'):
+        super().__init__(self)
         D = self.D
         g = self.g
         dt = self.dt
